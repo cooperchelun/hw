@@ -24,6 +24,7 @@
             user-select: none;
             -webkit-user-select: none;
             position: relative;
+            cursor: pointer;  /* 滑鼠移到頁面任何地方都變成手勢，提示可點擊 */
         }
 
         /* 遊戲選單容器 */
@@ -31,12 +32,13 @@
             text-align: center;
             position: relative;
             z-index: 10;
+            pointer-events: none;  /* 讓容器不阻擋點擊，由 body 接收點擊事件 */
         }
 
         /* Logo 容器 */
         .game-title {
             margin-bottom: 20px;
-            cursor: pointer;  /* 滑鼠移到 Logo 上變手勢 */
+            pointer-events: none;  /* Logo 本身也不阻擋點擊，點擊仍由 body 接收 */
         }
 
         /* 原神 Logo 樣式與修復黑線 Bug 的關鍵設定 */
@@ -75,7 +77,7 @@
             }
         }
 
-        /* 新增：下方提示文字的樣式 - 淺灰色、會閃爍 */
+        /* 下方提示文字的樣式 - 淺灰色、會閃爍 */
         .click-hint {
             margin-top: 30px;
             font-size: 1rem;
@@ -83,7 +85,8 @@
             color: #aaaaaa;  /* 淺灰色 */
             letter-spacing: 2px;
             opacity: 0.6;
-            animation: blink 2.5s ease-in-out infinite;
+            animation: blink 1.5s ease-in-out infinite;
+            pointer-events: none;  /* 文字不阻擋點擊 */
         }
 
         /* 閃爍動畫：透明度變化 */
@@ -136,32 +139,23 @@
     <div class="flash-overlay" id="flashOverlay"></div>
 
     <div class="menu-container" id="menuContainer">
-        <!-- 原神 Logo 標題 - 點擊此處即可進入 -->
-        <h1 class="game-title" id="clickableLogo">
-            <img src="Genshin1.png" alt="點擊進入原神查詢系統" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/5/5d/Genshin_Impact_logo.png';">
+        <!-- 原神 Logo 標題 -->
+        <h1 class="game-title">
+            <img src="Genshin1.png" alt="原神查詢系統" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/5/5d/Genshin_Impact_logo.png';">
         </h1>
         
-        <!-- 新增：淺灰色閃爍提示文字 -->
+        <!-- 淺灰色閃爍提示文字 -->
         <div class="click-hint">
             ✦ 點擊任意地方進入 ✦
         </div>
     </div>
 
     <script>
-        // 取得 Logo 元素
-        const logoElement = document.getElementById('clickableLogo');
-
-        // 監聽 Logo 的點擊事件（取代原本的 body 點擊）
-        logoElement.addEventListener('click', function(e) {
-            // 阻止事件冒泡，避免觸發其他不需要的動作
-            e.stopPropagation();
-            
+        // 監聽整個 body 的點擊事件（點擊頁面任何地方都會觸發）
+        document.body.addEventListener('click', function(e) {
             // 從點擊位置建立水波紋特效（從滑鼠點擊位置出發）
             createRipple(e);
             
-            // 也可以從 Logo 正中心產生波紋（如果想要固定從圖片中心擴散，改用下方註解的那一行）
-            // createRippleFromElement(logoElement);
-
             // 取得轉場元素
             const container = document.getElementById('menuContainer');
             const flash = document.getElementById('flashOverlay');
@@ -201,27 +195,6 @@
             document.body.appendChild(ripple);
 
             // 動畫結束後移除元素
-            ripple.addEventListener('animationend', () => {
-                ripple.remove();
-            });
-        }
-
-        // 可選：從指定元素的中心產生波紋（讓效果更集中）
-        function createRippleFromElement(element) {
-            const rect = element.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            
-            const ripple = document.createElement('div');
-            ripple.classList.add('ripple');
-            
-            const size = Math.max(window.innerWidth, window.innerHeight) * 0.5;
-            ripple.style.width = ripple.style.height = `${size}px`;
-            ripple.style.left = `${centerX - size / 2}px`;
-            ripple.style.top = `${centerY - size / 2}px`;
-            
-            document.body.appendChild(ripple);
-            
             ripple.addEventListener('animationend', () => {
                 ripple.remove();
             });
