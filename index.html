@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>原神查詢系統 - 開始介面</title>
-    <!-- 引入高品質的繁體中文字體與電競感字體 -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@900&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+
     <style>
-        /* 全域樣式 */
         * {
             margin: 0;
             padding: 0;
@@ -17,117 +17,98 @@
         }
 
         body {
-            margin: 0;
-            padding: 0;
             height: 100vh;
             width: 100vw;
-            background-color: white;
-            font-family: 'Noto Sans TC', sans-serif;
             overflow: hidden;
-            position: relative;
+            background: linear-gradient(
+                180deg,
+                #f5f8ff 0%,
+                #dbe7ff 40%,
+                #c8d9ff 100%
+            );
+            font-family: 'Noto Sans TC', sans-serif;
         }
 
-        /* 整頁式透明按鈕：覆蓋整個畫面，點擊就觸發 */
-        .fullscreen-button {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            z-index: 1;
-            /* 讓按鈕本身透明且不影響視覺 */
-        }
-
-        /* 內容容器：位於按鈕上方但會被點擊穿透，因為按鈕在更底層？不對，要調整 */
-        /* 正確作法：內容放在按鈕「上方」但讓按鈕攔截點擊，需要調整 z-index */
-        /* 修正：按鈕要能攔截點擊，內容要設 pointer-events: none 讓點擊穿透到按鈕 */
         .menu-container {
             position: relative;
-            text-align: center;
-            z-index: 2;
+            width: 100vw;
+            height: 100vh;
+
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            width: 100vw;
-            pointer-events: none;  /* 讓所有內容不攔截點擊，點擊穿透到底層按鈕 */
+
+            cursor: pointer;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Logo 容器 */
         .game-title {
             margin-bottom: 20px;
-            pointer-events: none;
         }
 
-        /* 原神 Logo 樣式 */
         .game-title img {
             width: 600px;
             max-width: 90vw;
             height: auto;
             display: block;
-            margin: 0 auto;
-            border: none;
-            outline: none;
 
-            will-change: transform, filter;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            transform: translate3d(0, 0, 0);
-
-            filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.2));
+            filter: drop-shadow(0 0 20px rgba(0,0,0,0.2));
 
             animation: float 4s ease-in-out infinite;
         }
 
-        /* 浮空動畫 */
         @keyframes float {
             0% {
-                transform: translate3d(0, 0, 0);
+                transform: translateY(0px);
             }
+
             50% {
-                transform: translate3d(0, -15px, 0);
+                transform: translateY(-15px);
             }
+
             100% {
-                transform: translate3d(0, 0, 0);
+                transform: translateY(0px);
             }
         }
 
-        /* 提示文字樣式 */
         .click-hint {
             margin-top: 30px;
             font-size: 1rem;
-            font-family: 'Noto Sans TC', sans-serif;
-            color: #aaaaaa;
             letter-spacing: 2px;
-            opacity: 0.6;
+            color: #666;
+
             animation: blink 1.5s ease-in-out infinite;
-            pointer-events: none;
         }
 
-        /* 閃爍動畫 */
         @keyframes blink {
-            0%, 100% {
+            0%,100% {
                 opacity: 0.3;
             }
+
             50% {
-                opacity: 0.9;
+                opacity: 1;
             }
         }
 
-        /* 水波紋特效 */
         .ripple {
             position: fixed;
-            border: 2px solid rgba(0, 0, 0, 0.3);
-            background: radial-gradient(circle, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 70%);
             border-radius: 50%;
             pointer-events: none;
+
+            border: 2px solid rgba(255,255,255,0.6);
+
+            background: radial-gradient(
+                circle,
+                rgba(255,255,255,0.4) 0%,
+                rgba(255,255,255,0) 70%
+            );
+
             transform: scale(0);
+
             animation: ripple-effect 0.8s ease-out;
-            z-index: 1000;
+
+            z-index: 9999;
         }
 
         @keyframes ripple-effect {
@@ -137,82 +118,86 @@
             }
         }
 
-        /* 白光閃爍層 */
         .flash-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #ffffff;
+            inset: 0;
+
+            background: white;
+
             opacity: 0;
+
             pointer-events: none;
+
             transition: opacity 0.5s ease;
-            z-index: 100;
+
+            z-index: 999;
         }
     </style>
 </head>
 <body>
 
-    <!-- 整頁式透明按鈕：點擊畫面任何地方都會觸發 -->
-    <button class="fullscreen-button" id="fullscreenBtn" aria-label="點擊任意地方進入"></button>
-
-    <!-- 白光閃爍層 -->
     <div class="flash-overlay" id="flashOverlay"></div>
 
-    <!-- 內容容器：所有視覺元素放在這裡 -->
     <div class="menu-container" id="menuContainer">
+
         <h1 class="game-title">
-            <img src="Genshin1.png" alt="原神查詢系統" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/5/5d/Genshin_Impact_logo.png';">
+            <img src="genshin.png" alt="原神查詢系統">
         </h1>
+
         <div class="click-hint">
             ✦ 點擊任意地方進入 ✦
         </div>
+
     </div>
 
     <script>
-        // 取得整頁式按鈕元素
-        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const container = document.getElementById('menuContainer');
 
-        // 監聽按鈕的點擊事件
-        fullscreenBtn.addEventListener('click', function(e) {
-            // 從點擊位置建立水波紋特效
+        container.addEventListener('click', function(e) {
+
             createRipple(e);
-            
-            // 取得轉場元素
-            const container = document.getElementById('menuContainer');
+
             const flash = document.getElementById('flashOverlay');
 
-            // 觸發白光閃爍與畫面縮放淡出
-            flash.style.opacity = '0.3';
-            container.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-            container.style.opacity = '0';
-            container.style.transform = 'scale(1.15)';
+            flash.style.opacity = '0.4';
 
-            // 0.3 秒後白光消退
+            container.style.opacity = '0';
+            container.style.transform = 'scale(1.1)';
+
             setTimeout(() => {
                 flash.style.opacity = '0';
             }, 300);
 
-            // 0.8 秒後執行進入邏輯
             setTimeout(() => {
-                // 跳轉到查詢系統主頁面（請根據實際情況修改）
+
+                // 改成你的主頁名稱
                 // window.location.href = "search.html";
-                
+
                 showEntranceMessage();
+
             }, 800);
         });
 
-        // 水波紋特效（根據滑鼠點擊位置）
         function createRipple(event) {
+
             const ripple = document.createElement('div');
+
             ripple.classList.add('ripple');
-            
-            const size = Math.max(window.innerWidth, window.innerHeight) * 0.5;
-            ripple.style.width = ripple.style.height = `${size}px`;
-            ripple.style.left = `${event.clientX - size / 2}px`;
-            ripple.style.top = `${event.clientY - size / 2}px`;
-            
+
+            const size = Math.max(
+                window.innerWidth,
+                window.innerHeight
+            ) * 0.5;
+
+            ripple.style.width = size + 'px';
+            ripple.style.height = size + 'px';
+
+            ripple.style.left =
+                (event.clientX - size / 2) + 'px';
+
+            ripple.style.top =
+                (event.clientY - size / 2) + 'px';
+
             document.body.appendChild(ripple);
 
             ripple.addEventListener('animationend', () => {
@@ -220,41 +205,74 @@
             });
         }
 
-        // 進入提示訊息
         function showEntranceMessage() {
+
             const msgBox = document.createElement('div');
+
             msgBox.style.position = 'fixed';
             msgBox.style.top = '50%';
             msgBox.style.left = '50%';
-            msgBox.style.transform = 'translate(-50%, -50%)';
-            msgBox.style.background = 'rgba(15, 11, 28, 0.95)';
-            msgBox.style.border = '2px solid #00ffff';
-            msgBox.style.padding = '30px 50px';
-            msgBox.style.borderRadius = '16px';
-            msgBox.style.color = '#ffffff';
-            msgBox.style.fontSize = '1.5rem';
-            msgBox.style.fontWeight = 'bold';
-            msgBox.style.textAlign = 'center';
-            msgBox.style.boxShadow = '0 0 30px rgba(0, 255, 255, 0.3)';
-            msgBox.style.zIndex = '2000';
-            msgBox.style.transition = 'all 0.5s ease';
+
+            msgBox.style.transform =
+                'translate(-50%, -50%)';
+
+            msgBox.style.background =
+                'rgba(15,11,28,0.95)';
+
+            msgBox.style.border =
+                '2px solid #00ffff';
+
+            msgBox.style.padding =
+                '30px 50px';
+
+            msgBox.style.borderRadius =
+                '16px';
+
+            msgBox.style.color =
+                '#ffffff';
+
+            msgBox.style.fontSize =
+                '1.5rem';
+
+            msgBox.style.fontWeight =
+                'bold';
+
+            msgBox.style.textAlign =
+                'center';
+
+            msgBox.style.boxShadow =
+                '0 0 30px rgba(0,255,255,0.3)';
+
+            msgBox.style.zIndex =
+                '10000';
+
             msgBox.innerHTML = `
-                <p style="margin: 0 0 15px 0;">✨ 正在連結提瓦特大陸... ✨</p>
-                <span style="font-size: 1rem; color: #a5a5a5;">（此處可接續你的原神查詢系統主功能）</span>
+                <p style="margin-bottom:15px;">
+                    ✨ 正在連結提瓦特大陸... ✨
+                </p>
+                <span style="font-size:1rem;color:#aaaaaa;">
+                    （此處可接續你的查詢系統）
+                </span>
             `;
+
             document.body.appendChild(msgBox);
 
             setTimeout(() => {
+
                 msgBox.style.opacity = '0';
+
                 setTimeout(() => {
+
                     msgBox.remove();
-                    const container = document.getElementById('menuContainer');
-                    container.style.transition = 'none';
+
                     container.style.opacity = '1';
                     container.style.transform = 'scale(1)';
+
                 }, 500);
+
             }, 3000);
         }
     </script>
+
 </body>
 </html>
