@@ -56,7 +56,7 @@
             transform: translate3d(0, 0, 0);
 
             /* 發光效果 */
-            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.45));
+            filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.2));
 
             /* 浮動動畫 */
             animation: float 4s ease-in-out infinite;
@@ -75,11 +75,32 @@
             }
         }
 
+        /* 新增：下方提示文字的樣式 - 淺灰色、會閃爍 */
+        .click-hint {
+            margin-top: 30px;
+            font-size: 1rem;
+            font-family: 'Noto Sans TC', sans-serif;
+            color: #aaaaaa;  /* 淺灰色 */
+            letter-spacing: 2px;
+            opacity: 0.6;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        /* 閃爍動畫：透明度變化 */
+        @keyframes blink {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.9;
+            }
+        }
+
         /* 點擊時的螢幕水波紋特效 */
         .ripple {
             position: absolute;
-            border: 2px solid rgba(255, 255, 255, 0.7);
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            background: radial-gradient(circle, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 70%);
             border-radius: 50%;
             pointer-events: none;
             transform: scale(0);
@@ -119,6 +140,11 @@
         <h1 class="game-title" id="clickableLogo">
             <img src="Genshin1.png" alt="點擊進入原神查詢系統" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/5/5d/Genshin_Impact_logo.png';">
         </h1>
+        
+        <!-- 新增：淺灰色閃爍提示文字 -->
+        <div class="click-hint">
+            ✦ 點擊任意地方進入 ✦
+        </div>
     </div>
 
     <script>
