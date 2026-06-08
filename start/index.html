@@ -26,18 +26,33 @@
             text-align: center;
             position: relative;
         }
-
-        /* 標題動畫特效 */
         .game-title {
-            font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
-            font-size: 4rem;
-            font-weight: 900;
-            color: #ffffff;
-            margin-bottom: 3rem;
-            letter-spacing: 8px;
-            text-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+            margin-bottom: 40px;
         }
 
+        .game-title img {
+            width: 600px;       /* Logo 大小 */
+            max-width: 90vw;    /* 手機不會超出螢幕 */
+            height: auto;
+
+            /* 發光效果 */
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.4));
+
+            /* 浮動動畫 */
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
         /* 按鈕主體外觀 */
         .start-btn {
             background-color: rgba(255, 255, 255, 0.03);
@@ -109,7 +124,7 @@
     <div class="menu-container">
         <!-- 遊戲主標題 -->
         <h1 class="game-title">
-            <img src="genshin title screen.png" alt="Genshin Impact Title">
+            <img src="genshin.png" alt="原神">
         </h1>
         
         <!-- 帶有斜體與陰影變色特效的開始遊戲按鈕 -->
