@@ -328,7 +328,7 @@
             <button class="grid-btn">抽卡模擬器</button>
             <button class="grid-btn">隊伍搭配建議</button>
             
-            <button class="grid-btn">每日簽到助手</button>
+            <button class="grid-btn" id="signinBtn">每日簽到助手</button>
             <button class="grid-btn">深境螺旋紀錄</button>
             <button class="grid-btn">系統設定</button>
         </div>
@@ -490,6 +490,16 @@
                 }, 200);
             });
         });
+
+        // 綁定「每日簽到助手」專屬跳轉連結
+        const signinBtn = document.getElementById('signinBtn');
+        if (signinBtn) {
+            signinBtn.addEventListener('click', function() {
+                const targetUrl = "https://act.hoyolab.com/ys/event/signin-sea-v3/index.html?act_id=e202102251931481&hyl_auth_required=true&hyl_presentation_style=fullscreen&lang=zh-tw&utm_source=hoyolab&utm_medium=tools";
+                // 使用 window.open 在新分頁開啟，防止 Iframe 的同源政策擋下
+                window.open(targetUrl, '_blank');
+            });
+        }
     </script>
 
 </body>
