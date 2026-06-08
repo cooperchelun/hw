@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原神查詢系統</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@900&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <style>
+        /* 全域樣式：科技感深色漸層背景 */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #1b153a 0%, #080512 100%);
+            font-family: 'Noto Sans TC', sans-serif;
+            overflow: hidden;
+        }
+
+        /* 遊戲選單容器 */
+        .menu-container {
+            text-align: center;
+            position: relative;
+        }
+
+        /* 標題動畫特效 */
+        .game-title {
+            font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 3rem;
+            letter-spacing: 8px;
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+        }
+
+        /* 按鈕主體外觀 */
+        .start-btn {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 20px 60px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(4px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 關鍵：文字的斜體與多重陰影設定 */
+        .start-btn span {
+            display: inline-block;
+            font-size: 2rem;
+            font-weight: 900;
+            font-style: italic; /* 斜體效果 */
+            letter-spacing: 4px;
+            
+            /* skewX 增加額外的動感傾斜度，並加入多層次立體與霓虹陰影 */
+            transform: skewX(-5deg); 
+            text-shadow: 
+                2px 2px 0px #000000, /* 黑色立體描邊 */
+                4px 4px 0px rgba(0, 0, 0, 0.8), /* 延伸深色投影 */
+                0 0 12px currentColor; /* 跟隨主體顏色的霓虹發光（精髓所在） */
+
+            /* 每 1.2 秒切換一次顏色 (4.8s / 4個顏色 = 1.2s) */
+            animation: changeColor 4.8s infinite steps(1);
+        }
+
+        /* 變色動畫設定 */
+        @keyframes changeColor {
+            0%   { color: #00ffff; } /* 冰藍 */
+            25%  { color: #ff007f; } /* 霓虹粉紅 */
+            50%  { color: #39ff14; } /* 螢光綠 */
+            75%  { color: #ffaa00; } /* 烈焰橘 */
+            100% { color: #00ffff; } /* 循環回冰藍 */
+        }
+
+        /* 滑鼠懸停效果：按鈕本體與邊框放大、發光 */
+        .start-btn:hover {
+            transform: scale(1.08) translateY(-5px);
+            border-color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 0 30px rgba(139, 92, 246, 0.4),
+                inset 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        /* 滑鼠懸停時，文字產生微微的跳動感 */
+        .start-btn:hover span {
+            transform: skewX(-5deg) scale(1.05);
+            text-shadow: 
+                2px 2px 0px #000000,
+                0 0 20px currentColor; /* 發光更強烈 */
+        }
+
+        /* 按下按鈕時的按壓回饋 */
+        .start-btn:active {
+            transform: scale(0.95) translateY(2px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="menu-container">
+        <!-- 遊戲主標題 -->
+        <h1 class="game-title">
+            <img src="genshin title screen.png" alt="Genshin Impact Title">
+        </h1>
+        
+        <!-- 帶有斜體與陰影變色特效的開始遊戲按鈕 -->
+        <button class="start-btn">
+            <span>開始遊戲</span>
+        </button>
+    </div>
+
+</body>
+</html>
