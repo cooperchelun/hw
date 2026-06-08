@@ -7,7 +7,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@900&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;900&family=Orbitron:wght@900&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -16,14 +16,19 @@
             box-sizing: border-box;
         }
 
+        /* 完美保留：原版的純白背景與全螢幕佈局 */
         body {
             height: 100vh;
             width: 100vw;
             overflow: hidden;
             background-color: white;
             font-family: 'Noto Sans TC', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            position: relative;
         }
 
+        /* 完美保留：原版的選單容器結構與過渡效果 */
         .menu-container {
             position: relative;
             width: 100vw;
@@ -36,17 +41,25 @@
 
             cursor: pointer;
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
         }
 
         .game-title {
             margin-bottom: 20px;
         }
 
+        /* 完美保留：原版的圖片大小、黑色陰影、以及浮動動畫 */
         .game-title img {
             width: 600px;
             max-width: 90vw;
             height: auto;
             display: block;
+
+            /* 防止瀏覽器在動畫時產生邊緣邊框黑線的優化設定 */
+            will-change: transform, filter;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translate3d(0, 0, 0);
 
             filter: drop-shadow(0 0 20px rgba(0,0,0,0.2));
 
@@ -67,6 +80,7 @@
             }
         }
 
+        /* 完美保留：原版的點擊提示文字樣式與灰色閃爍動畫 */
         .click-hint {
             margin-top: 30px;
             font-size: 1rem;
@@ -77,7 +91,7 @@
         }
 
         @keyframes blink {
-            0%,100% {
+            0%, 100% {
                 opacity: 0.3;
             }
 
@@ -86,6 +100,7 @@
             }
         }
 
+        /* 完美保留：原版的水波紋特效 */
         .ripple {
             position: fixed;
             border-radius: 50%;
@@ -113,6 +128,7 @@
             }
         }
 
+        /* 完美保留：原版的白光閃爍轉場層 */
         .flash-overlay {
             position: fixed;
             inset: 0;
@@ -127,12 +143,165 @@
 
             z-index: 999;
         }
+
+        /* ==================== 九宮格系統介面（與原版風格統一的雅緻淺色系） ==================== */
+        .grid-screen {
+            position: absolute;
+            inset: 0;
+            display: none; /* 初始隱藏 */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 20;
+            padding: 20px;
+            background-color: #fafafa; /* 溫潤的極淺灰背景，契合原版風格 */
+        }
+
+        .grid-screen.active {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .grid-title {
+            color: #333333;
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 50px;
+            letter-spacing: 6px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        /* 九宮格容器：設定間距為 80px */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 80px; /* 電腦大螢幕保留 80px 完美間距 */
+            max-width: 900px;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 九宮格按鈕樣式：典雅白底與灰色、金銅色調和 */
+        .grid-btn {
+            background: #ffffff;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px 15px;
+            color: #444444;
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            outline: none;
+        }
+
+        /* 按鈕懸停效果：優雅的原神岩元素金黃微發光 */
+        .grid-btn:hover {
+            transform: translateY(-5px);
+            border-color: #d3bc8e; /* 原神優雅淺金 */
+            color: #c4a162;
+            box-shadow: 
+                0 15px 30px rgba(211, 188, 142, 0.15),
+                0 0 15px rgba(211, 188, 142, 0.25);
+            background: #ffffff;
+        }
+
+        /* 按鈕點擊效果 */
+        .grid-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* 裝飾線條效果 */
+        .grid-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.03), transparent);
+            transition: 0.5s;
+        }
+
+        .grid-btn:hover::before {
+            left: 100%;
+        }
+
+        /* 返回按鈕 */
+        .back-btn {
+            margin-top: 60px;
+            background: transparent;
+            border: 1px solid #999999;
+            color: #666666;
+            padding: 10px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: #333333;
+            border-color: #333333;
+        }
+
+        /* 響應式設計：小螢幕時自動調整按鈕與間距，避免超出螢幕 */
+        @media (max-width: 768px) {
+            .grid-container {
+                gap: 30px; /* 平板間距縮小至 30px */
+                max-width: 600px;
+            }
+            .grid-btn {
+                padding: 18px 10px;
+                font-size: 1.1rem;
+            }
+            .grid-title {
+                font-size: 1.8rem;
+                margin-bottom: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid-container {
+                gap: 15px; /* 手機直向間距縮小至 15px */
+                grid-template-columns: repeat(3, 1fr); /* 依然保持九宮格 */
+            }
+            .grid-btn {
+                padding: 15px 5px;
+                font-size: 0.85rem;
+                border-radius: 8px;
+            }
+            .grid-title {
+                font-size: 1.4rem;
+                margin-bottom: 20px;
+            }
+            .back-btn {
+                margin-top: 40px;
+            }
+        }
     </style>
 </head>
 <body>
 
+    <!-- 點擊進入的白光閃爍層 -->
     <div class="flash-overlay" id="flashOverlay"></div>
 
+    <!-- 階段一：遊戲開始畫面（完整保留原版風格） -->
     <div class="menu-container" id="menuContainer">
 
         <h1 class="game-title">
@@ -145,38 +314,65 @@
 
     </div>
 
+    <!-- 階段二：九宮格功能選單（風格一致的典雅排版） -->
+    <div class="grid-screen" id="gridScreen">
+        <h2 class="grid-title">原神查詢選單</h2>
+        
+        <div class="grid-container">
+            <!-- 9 個功能按鈕 -->
+            <button class="grid-btn">角色資料查詢</button>
+            <button class="grid-btn">聖遺物評分</button>
+            <button class="grid-btn">武器圖鑑</button>
+            
+            <button class="grid-btn">大地圖資源</button>
+            <button class="grid-btn">抽卡模擬器</button>
+            <button class="grid-btn">隊伍搭配建議</button>
+            
+            <button class="grid-btn">每日簽到助手</button>
+            <button class="grid-btn">深境螺旋紀錄</button>
+            <button class="grid-btn">系統設定</button>
+        </div>
+
+        <!-- 返回起始畫面 -->
+        <button class="back-btn" id="backBtn">返回主頁</button>
+    </div>
+
     <script>
         const container = document.getElementById('menuContainer');
+        const gridScreen = document.getElementById('gridScreen');
+        const backBtn = document.getElementById('backBtn');
+        const flash = document.getElementById('flashOverlay');
 
+        // 是否已經進入了選單，防止重複點擊
+        let isEntered = false;
+
+        // 監聽開始畫面點擊事件
         container.addEventListener('click', function(e) {
+            if (isEntered) return;
+            isEntered = true;
 
+            // 建立水波紋特效
             createRipple(e);
 
-            const flash = document.getElementById('flashOverlay');
-
+            // 觸發白光閃爍
             flash.style.opacity = '0.4';
 
+            // 開始畫面淡出，向上微縮放
             container.style.opacity = '0';
             container.style.transform = 'scale(1.1)';
+            container.style.pointerEvents = 'none'; // 點擊後禁用
 
             setTimeout(() => {
                 flash.style.opacity = '0';
             }, 300);
 
-            setTimeout(() => {
-
-                // 改成你的主頁名稱
-                // window.location.href = "search.html";
-
-                showEntranceMessage();
-
-            }, 800);
+            // 顯示原汁原味的過度彈窗，精確維持 3 秒後進入九宮格
+            showEntranceMessage();
         });
 
+        // 動態生成水波紋
         function createRipple(event) {
-
             const ripple = document.createElement('div');
-
             ripple.classList.add('ripple');
 
             const size = Math.max(
@@ -187,11 +383,8 @@
             ripple.style.width = size + 'px';
             ripple.style.height = size + 'px';
 
-            ripple.style.left =
-                (event.clientX - size / 2) + 'px';
-
-            ripple.style.top =
-                (event.clientY - size / 2) + 'px';
+            ripple.style.left = (event.clientX - size / 2) + 'px';
+            ripple.style.top = (event.clientY - size / 2) + 'px';
 
             document.body.appendChild(ripple);
 
@@ -200,73 +393,101 @@
             });
         }
 
+        // 提示彈窗（與原版風格相容的清爽雅緻設計）
         function showEntranceMessage() {
-
             const msgBox = document.createElement('div');
 
             msgBox.style.position = 'fixed';
             msgBox.style.top = '50%';
             msgBox.style.left = '50%';
-
-            msgBox.style.transform =
-                'translate(-50%, -50%)';
-
-            msgBox.style.background =
-                'rgba(15,11,28,0.95)';
-
-            msgBox.style.border =
-                '2px solid #00ffff';
-
-            msgBox.style.padding =
-                '30px 50px';
-
-            msgBox.style.borderRadius =
-                '16px';
-
-            msgBox.style.color =
-                '#ffffff';
-
-            msgBox.style.fontSize =
-                '1.5rem';
-
-            msgBox.style.fontWeight =
-                'bold';
-
-            msgBox.style.textAlign =
-                'center';
-
-            msgBox.style.boxShadow =
-                '0 0 30px rgba(0,255,255,0.3)';
-
-            msgBox.style.zIndex =
-                '10000';
+            msgBox.style.transform = 'translate(-50%, -50%) scale(0.9)';
+            msgBox.style.background = 'rgba(255, 255, 255, 0.98)';
+            msgBox.style.border = '2px solid #d3bc8e';
+            msgBox.style.padding = '35px 60px';
+            msgBox.style.borderRadius = '16px';
+            msgBox.style.color = '#333333';
+            msgBox.style.fontSize = '1.6rem';
+            msgBox.style.fontWeight = '900';
+            msgBox.style.textAlign = 'center';
+            msgBox.style.boxShadow = '0 10px 40px rgba(0, 0, 0, 0.08)';
+            msgBox.style.zIndex = '10000';
+            msgBox.style.opacity = '0';
+            msgBox.style.transition = 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
 
             msgBox.innerHTML = `
-                <p style="margin-bottom:15px;">
+                <p style="margin-bottom:15px; letter-spacing: 2px;">
                     ✨ 正在連結提瓦特大陸... ✨
                 </p>
-                <span style="font-size:1rem;color:#aaaaaa;">
-                    （此處可接續你的查詢系統）
+                <span style="font-size:1.05rem; color:#888888; font-weight: normal; letter-spacing: 1px;">
+                    請稍候，即將進入查詢系統
                 </span>
             `;
 
             document.body.appendChild(msgBox);
 
-            setTimeout(() => {
+            // 讓過渡彈窗平滑顯現
+            requestAnimationFrame(() => {
+                msgBox.style.opacity = '1';
+                msgBox.style.transform = 'translate(-50%, -50%) scale(1)';
+            });
 
+            // 精確維持 3 秒後開始轉場
+            setTimeout(() => {
                 msgBox.style.opacity = '0';
+                msgBox.style.transform = 'translate(-50%, -50%) scale(0.95)';
 
                 setTimeout(() => {
-
                     msgBox.remove();
+                    
+                    // 徹底隱藏開始畫面容器，避免干擾九宮格操作
+                    container.style.display = 'none';
 
-                    container.style.opacity = '1';
-                    container.style.transform = 'scale(1)';
-
+                    // 顯現九宮格選單
+                    gridScreen.style.display = 'flex';
+                    requestAnimationFrame(() => {
+                        gridScreen.classList.add('active');
+                    });
                 }, 500);
 
             }, 3000);
         }
+
+        // 返回按鈕點擊事件：恢復初始畫面
+        backBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // 阻止事件冒泡到 body
+
+            // 隱藏九宮格
+            gridScreen.classList.remove('active');
+            
+            setTimeout(() => {
+                gridScreen.style.display = 'none';
+
+                // 重新顯示開始畫面並還原狀態
+                container.style.display = 'flex';
+                requestAnimationFrame(() => {
+                    container.style.opacity = '1';
+                    container.style.transform = 'scale(1)';
+                    container.style.pointerEvents = 'auto';
+                    isEntered = false;
+                });
+            }, 800);
+        });
+
+        // 綁定九宮格按鈕點擊效果（範例提示）
+        const buttons = document.querySelectorAll('.grid-btn');
+        buttons.forEach((btn, index) => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation(); // 阻止冒泡
+                
+                console.log(`點擊了第 ${index + 1} 個按鈕：${this.innerText}`);
+                
+                // 點擊後的反饋光效
+                this.style.borderColor = '#c4a162';
+                setTimeout(() => {
+                    this.style.borderColor = '#e0e0e0';
+                }, 200);
+            });
+        });
     </script>
 
 </body>
