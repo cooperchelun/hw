@@ -366,8 +366,10 @@
                 flash.style.opacity = '0';
             }, 300);
 
-            // 顯示原汁原味的過度彈窗，精確維持 3 秒後進入九宮格
-            showEntranceMessage();
+            // 調整：稍微放慢 1.2 秒（1200毫秒）後，才優雅地滑入載入彈窗
+            setTimeout(() => {
+                showEntranceMessage();
+            }, 1200);
         });
 
         // 動態生成水波紋
