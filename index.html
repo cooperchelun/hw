@@ -9,62 +9,81 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@900&family=Orbitron:wght@900&display=swap" rel="stylesheet">
     <style>
-        /* 全域樣式：滿版深色神秘星空漸層背景 */
+        /* 全域樣式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             padding: 0;
             height: 100vh;
             width: 100vw;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             background-color: white;
             font-family: 'Noto Sans TC', sans-serif;
             overflow: hidden;
-            user-select: none;
-            -webkit-user-select: none;
             position: relative;
-            cursor: pointer;  /* 滑鼠移到頁面任何地方都變成手勢，提示可點擊 */
         }
 
-        /* 遊戲選單容器 */
+        /* 整頁式透明按鈕：覆蓋整個畫面，點擊就觸發 */
+        .fullscreen-button {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 1;
+            /* 讓按鈕本身透明且不影響視覺 */
+        }
+
+        /* 內容容器：位於按鈕上方但會被點擊穿透，因為按鈕在更底層？不對，要調整 */
+        /* 正確作法：內容放在按鈕「上方」但讓按鈕攔截點擊，需要調整 z-index */
+        /* 修正：按鈕要能攔截點擊，內容要設 pointer-events: none 讓點擊穿透到按鈕 */
         .menu-container {
-            text-align: center;
             position: relative;
-            z-index: 10;
-            pointer-events: none;  /* 讓容器不阻擋點擊，由 body 接收點擊事件 */
+            text-align: center;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            pointer-events: none;  /* 讓所有內容不攔截點擊，點擊穿透到底層按鈕 */
         }
 
         /* Logo 容器 */
         .game-title {
             margin-bottom: 20px;
-            pointer-events: none;  /* Logo 本身也不阻擋點擊，點擊仍由 body 接收 */
+            pointer-events: none;
         }
 
-        /* 原神 Logo 樣式與修復黑線 Bug 的關鍵設定 */
+        /* 原神 Logo 樣式 */
         .game-title img {
-            width: 600px;       /* Logo 大小 */
-            max-width: 90vw;    /* 手機不會超出螢幕 */
+            width: 600px;
+            max-width: 90vw;
             height: auto;
             display: block;
             margin: 0 auto;
             border: none;
             outline: none;
 
-            /* 防止瀏覽器在 transform 動畫時產生邊緣黑線/鋸齒的優化語法 */
             will-change: transform, filter;
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
             transform: translate3d(0, 0, 0);
 
-            /* 發光效果 */
             filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.2));
 
-            /* 浮動動畫 */
             animation: float 4s ease-in-out infinite;
         }
 
-        /* 平滑的浮空動畫 */
+        /* 浮空動畫 */
         @keyframes float {
             0% {
                 transform: translate3d(0, 0, 0);
@@ -77,19 +96,19 @@
             }
         }
 
-        /* 下方提示文字的樣式 - 淺灰色、會閃爍 */
+        /* 提示文字樣式 */
         .click-hint {
             margin-top: 30px;
             font-size: 1rem;
             font-family: 'Noto Sans TC', sans-serif;
-            color: #aaaaaa;  /* 淺灰色 */
+            color: #aaaaaa;
             letter-spacing: 2px;
             opacity: 0.6;
             animation: blink 1.5s ease-in-out infinite;
-            pointer-events: none;  /* 文字不阻擋點擊 */
+            pointer-events: none;
         }
 
-        /* 閃爍動畫：透明度變化 */
+        /* 閃爍動畫 */
         @keyframes blink {
             0%, 100% {
                 opacity: 0.3;
@@ -99,16 +118,16 @@
             }
         }
 
-        /* 點擊時的螢幕水波紋特效 */
+        /* 水波紋特效 */
         .ripple {
-            position: absolute;
+            position: fixed;
             border: 2px solid rgba(0, 0, 0, 0.3);
             background: radial-gradient(circle, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 70%);
             border-radius: 50%;
             pointer-events: none;
             transform: scale(0);
             animation: ripple-effect 0.8s ease-out;
-            z-index: 5;
+            z-index: 1000;
         }
 
         @keyframes ripple-effect {
@@ -118,7 +137,7 @@
             }
         }
 
-        /* 進入遊戲時的轉場白光閃爍效果 */
+        /* 白光閃爍層 */
         .flash-overlay {
             position: fixed;
             top: 0;
@@ -135,25 +154,29 @@
 </head>
 <body>
 
-    <!-- 點擊進入的白光閃爍層 -->
+    <!-- 整頁式透明按鈕：點擊畫面任何地方都會觸發 -->
+    <button class="fullscreen-button" id="fullscreenBtn" aria-label="點擊任意地方進入"></button>
+
+    <!-- 白光閃爍層 -->
     <div class="flash-overlay" id="flashOverlay"></div>
 
+    <!-- 內容容器：所有視覺元素放在這裡 -->
     <div class="menu-container" id="menuContainer">
-        <!-- 原神 Logo 標題 -->
         <h1 class="game-title">
             <img src="Genshin1.png" alt="原神查詢系統" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/5/5d/Genshin_Impact_logo.png';">
         </h1>
-        
-        <!-- 淺灰色閃爍提示文字 -->
         <div class="click-hint">
             ✦ 點擊任意地方進入 ✦
         </div>
     </div>
 
     <script>
-        // 監聽整個 body 的點擊事件（點擊頁面任何地方都會觸發）
-        document.body.addEventListener('click', function(e) {
-            // 從點擊位置建立水波紋特效（從滑鼠點擊位置出發）
+        // 取得整頁式按鈕元素
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+        // 監聽按鈕的點擊事件
+        fullscreenBtn.addEventListener('click', function(e) {
+            // 從點擊位置建立水波紋特效
             createRipple(e);
             
             // 取得轉場元素
@@ -166,27 +189,25 @@
             container.style.opacity = '0';
             container.style.transform = 'scale(1.15)';
 
-            // 0.3 秒後白光消退，模擬載入中
+            // 0.3 秒後白光消退
             setTimeout(() => {
                 flash.style.opacity = '0';
             }, 300);
 
             // 0.8 秒後執行進入邏輯
             setTimeout(() => {
-                // 在這裡可以放入跳轉到查詢系統主頁面的代碼，例如：
+                // 跳轉到查詢系統主頁面（請根據實際情況修改）
                 // window.location.href = "search.html";
                 
-                // 暫時用自訂訊息盒代替
                 showEntranceMessage();
             }, 800);
         });
 
-        // 動態生成水波紋（根據滑鼠點擊位置）
+        // 水波紋特效（根據滑鼠點擊位置）
         function createRipple(event) {
             const ripple = document.createElement('div');
             ripple.classList.add('ripple');
             
-            // 計算點擊位置，使波紋中心對準滑鼠點擊處
             const size = Math.max(window.innerWidth, window.innerHeight) * 0.5;
             ripple.style.width = ripple.style.height = `${size}px`;
             ripple.style.left = `${event.clientX - size / 2}px`;
@@ -194,13 +215,12 @@
             
             document.body.appendChild(ripple);
 
-            // 動畫結束後移除元素
             ripple.addEventListener('animationend', () => {
                 ripple.remove();
             });
         }
 
-        // 自訂進入提示（代替瀏覽器 alert）
+        // 進入提示訊息
         function showEntranceMessage() {
             const msgBox = document.createElement('div');
             msgBox.style.position = 'fixed';
@@ -216,7 +236,7 @@
             msgBox.style.fontWeight = 'bold';
             msgBox.style.textAlign = 'center';
             msgBox.style.boxShadow = '0 0 30px rgba(0, 255, 255, 0.3)';
-            msgBox.style.zIndex = '1000';
+            msgBox.style.zIndex = '2000';
             msgBox.style.transition = 'all 0.5s ease';
             msgBox.innerHTML = `
                 <p style="margin: 0 0 15px 0;">✨ 正在連結提瓦特大陸... ✨</p>
@@ -224,7 +244,6 @@
             `;
             document.body.appendChild(msgBox);
 
-            // 3 秒後自動恢復原狀，允許重複測試
             setTimeout(() => {
                 msgBox.style.opacity = '0';
                 setTimeout(() => {
