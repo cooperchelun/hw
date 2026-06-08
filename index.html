@@ -3,135 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>原神查詢系統</title>
+    <title>原神查詢系統 - 開始介面</title>
+    <!-- 引入高品質的繁體中文字體與電競感字體 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@900&family=Orbitron:wght@900&display=swap" rel="stylesheet">
     <style>
-        /* 全域樣式：科技感深色漸層背景 */
+        /* 全域樣式：滿版深色神秘星空漸層背景 */
         body {
             margin: 0;
             padding: 0;
             height: 100vh;
+            width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: white;
+            background: radial-gradient(circle at center, #1b153a 0%, #080512 100%);
             font-family: 'Noto Sans TC', sans-serif;
             overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            position: relative;
         }
 
         /* 遊戲選單容器 */
         .menu-container {
             text-align: center;
             position: relative;
-        }
-        .game-title {
-            margin-bottom: 40px;
+            z-index: 10;
         }
 
+        /* Logo 容器 */
+        .game-title {
+            margin-bottom: 20px;
+            cursor: pointer;  /* 滑鼠移到 Logo 上變手勢 */
+        }
+
+        /* 原神 Logo 樣式與修復黑線 Bug 的關鍵設定 */
         .game-title img {
             width: 600px;       /* Logo 大小 */
             max-width: 90vw;    /* 手機不會超出螢幕 */
             height: auto;
+            display: block;
+            margin: 0 auto;
+            border: none;
+            outline: none;
+
+            /* 防止瀏覽器在 transform 動畫時產生邊緣黑線/鋸齒的優化語法 */
+            will-change: transform, filter;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translate3d(0, 0, 0);
 
             /* 發光效果 */
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.4));
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.45));
 
             /* 浮動動畫 */
-            animation: float 3s ease-in-out infinite;
+            animation: float 4s ease-in-out infinite;
         }
 
+        /* 平滑的浮空動畫 */
         @keyframes float {
             0% {
-                transform: translateY(0px);
+                transform: translate3d(0, 0, 0);
             }
             50% {
-                transform: translateY(-10px);
+                transform: translate3d(0, -15px, 0);
             }
             100% {
-                transform: translateY(0px);
+                transform: translate3d(0, 0, 0);
             }
         }
-        /* 按鈕主體外觀 */
-        .start-btn {
-            background-color: rgba(255, 255, 255, 0.03);
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            border-radius: 12px;
-            padding: 20px 60px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            backdrop-filter: blur(4px);
-            position: relative;
-            overflow: hidden;
+
+        /* 點擊時的螢幕水波紋特效 */
+        .ripple {
+            position: absolute;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: scale(0);
+            animation: ripple-effect 0.8s ease-out;
+            z-index: 5;
         }
 
-        /* 關鍵：文字的斜體與多重陰影設定 */
-        .start-btn span {
-            display: inline-block;
-            font-size: 2rem;
-            font-weight: 900;
-            font-style: italic; /* 斜體效果 */
-            letter-spacing: 4px;
-            
-            /* skewX 增加額外的動感傾斜度，並加入多層次立體與霓虹陰影 */
-            transform: skewX(-5deg); 
-            text-shadow: 
-                2px 2px 0px #000000, /* 黑色立體描邊 */
-                4px 4px 0px rgba(0, 0, 0, 0.8), /* 延伸深色投影 */
-                0 0 12px currentColor; /* 跟隨主體顏色的霓虹發光（精髓所在） */
-
-            /* 每 1.2 秒切換一次顏色 (4.8s / 4個顏色 = 1.2s) */
-            animation: changeColor 4.8s infinite steps(1);
+        @keyframes ripple-effect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
         }
 
-        /* 變色動畫設定 */
-        @keyframes changeColor {
-            0%   { color: #00ffff; } /* 冰藍 */
-            25%  { color: #ff007f; } /* 霓虹粉紅 */
-            50%  { color: #39ff14; } /* 螢光綠 */
-            75%  { color: #ffaa00; } /* 烈焰橘 */
-            100% { color: #00ffff; } /* 循環回冰藍 */
-        }
-
-        /* 滑鼠懸停效果：按鈕本體與邊框放大、發光 */
-        .start-btn:hover {
-            transform: scale(1.08) translateY(-5px);
-            border-color: #ffffff;
-            background-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 
-                0 0 30px rgba(139, 92, 246, 0.4),
-                inset 0 0 15px rgba(255, 255, 255, 0.2);
-        }
-
-        /* 滑鼠懸停時，文字產生微微的跳動感 */
-        .start-btn:hover span {
-            transform: skewX(-5deg) scale(1.05);
-            text-shadow: 
-                2px 2px 0px #000000,
-                0 0 20px currentColor; /* 發光更強烈 */
-        }
-
-        /* 按下按鈕時的按壓回饋 */
-        .start-btn:active {
-            transform: scale(0.95) translateY(2px);
+        /* 進入遊戲時的轉場白光閃爍效果 */
+        .flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #ffffff;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            z-index: 100;
         }
     </style>
 </head>
 <body>
 
-    <div class="menu-container">
-        <!-- 遊戲主標題 -->
-        <h1 class="game-title">
-            <img src="Genshin1.png" alt="原神">
+    <!-- 點擊進入的白光閃爍層 -->
+    <div class="flash-overlay" id="flashOverlay"></div>
+
+    <div class="menu-container" id="menuContainer">
+        <!-- 原神 Logo 標題 - 點擊此處即可進入 -->
+        <h1 class="game-title" id="clickableLogo">
+            <img src="Genshin1.png" alt="點擊進入原神查詢系統" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/5/5d/Genshin_Impact_logo.png';">
         </h1>
-        
-        <!-- 帶有斜體與陰影變色特效的開始遊戲按鈕 -->
-        <button class="start-btn">
-            <span>開始遊戲</span>
-        </button>
     </div>
 
+    <script>
+        // 取得 Logo 元素
+        const logoElement = document.getElementById('clickableLogo');
+
+        // 監聽 Logo 的點擊事件（取代原本的 body 點擊）
+        logoElement.addEventListener('click', function(e) {
+            // 阻止事件冒泡，避免觸發其他不需要的動作
+            e.stopPropagation();
+            
+            // 從點擊位置建立水波紋特效（從滑鼠點擊位置出發）
+            createRipple(e);
+            
+            // 也可以從 Logo 正中心產生波紋（如果想要固定從圖片中心擴散，改用下方註解的那一行）
+            // createRippleFromElement(logoElement);
+
+            // 取得轉場元素
+            const container = document.getElementById('menuContainer');
+            const flash = document.getElementById('flashOverlay');
+
+            // 觸發白光閃爍與畫面縮放淡出
+            flash.style.opacity = '0.3';
+            container.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            container.style.opacity = '0';
+            container.style.transform = 'scale(1.15)';
+
+            // 0.3 秒後白光消退，模擬載入中
+            setTimeout(() => {
+                flash.style.opacity = '0';
+            }, 300);
+
+            // 0.8 秒後執行進入邏輯
+            setTimeout(() => {
+                // 在這裡可以放入跳轉到查詢系統主頁面的代碼，例如：
+                // window.location.href = "search.html";
+                
+                // 暫時用自訂訊息盒代替
+                showEntranceMessage();
+            }, 800);
+        });
+
+        // 動態生成水波紋（根據滑鼠點擊位置）
+        function createRipple(event) {
+            const ripple = document.createElement('div');
+            ripple.classList.add('ripple');
+            
+            // 計算點擊位置，使波紋中心對準滑鼠點擊處
+            const size = Math.max(window.innerWidth, window.innerHeight) * 0.5;
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${event.clientX - size / 2}px`;
+            ripple.style.top = `${event.clientY - size / 2}px`;
+            
+            document.body.appendChild(ripple);
+
+            // 動畫結束後移除元素
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+            });
+        }
+
+        // 可選：從指定元素的中心產生波紋（讓效果更集中）
+        function createRippleFromElement(element) {
+            const rect = element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const ripple = document.createElement('div');
+            ripple.classList.add('ripple');
+            
+            const size = Math.max(window.innerWidth, window.innerHeight) * 0.5;
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${centerX - size / 2}px`;
+            ripple.style.top = `${centerY - size / 2}px`;
+            
+            document.body.appendChild(ripple);
+            
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+            });
+        }
+
+        // 自訂進入提示（代替瀏覽器 alert）
+        function showEntranceMessage() {
+            const msgBox = document.createElement('div');
+            msgBox.style.position = 'fixed';
+            msgBox.style.top = '50%';
+            msgBox.style.left = '50%';
+            msgBox.style.transform = 'translate(-50%, -50%)';
+            msgBox.style.background = 'rgba(15, 11, 28, 0.95)';
+            msgBox.style.border = '2px solid #00ffff';
+            msgBox.style.padding = '30px 50px';
+            msgBox.style.borderRadius = '16px';
+            msgBox.style.color = '#ffffff';
+            msgBox.style.fontSize = '1.5rem';
+            msgBox.style.fontWeight = 'bold';
+            msgBox.style.textAlign = 'center';
+            msgBox.style.boxShadow = '0 0 30px rgba(0, 255, 255, 0.3)';
+            msgBox.style.zIndex = '1000';
+            msgBox.style.transition = 'all 0.5s ease';
+            msgBox.innerHTML = `
+                <p style="margin: 0 0 15px 0;">✨ 正在連結提瓦特大陸... ✨</p>
+                <span style="font-size: 1rem; color: #a5a5a5;">（此處可接續你的原神查詢系統主功能）</span>
+            `;
+            document.body.appendChild(msgBox);
+
+            // 3 秒後自動恢復原狀，允許重複測試
+            setTimeout(() => {
+                msgBox.style.opacity = '0';
+                setTimeout(() => {
+                    msgBox.remove();
+                    const container = document.getElementById('menuContainer');
+                    container.style.transition = 'none';
+                    container.style.opacity = '1';
+                    container.style.transform = 'scale(1)';
+                }, 500);
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
