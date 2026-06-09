@@ -16,7 +16,7 @@
             box-sizing: border-box;
         }
 
-        /* 完美保留：原版的純白背景與全螢幕佈局 */
+        /* 原版的純白背景與全螢幕佈局 */
         body {
             height: 100vh;
             width: 100vw;
@@ -28,7 +28,7 @@
             position: relative;
         }
 
-        /* 完美保留：原版的選單容器結構與過渡效果 */
+        /* 原版的選單容器結構與過渡效果 */
         .menu-container {
             position: relative;
             width: 100vw;
@@ -48,14 +48,13 @@
             margin-bottom: 20px;
         }
 
-        /* 完美保留：原版的圖片大小、黑色陰影、以及浮動動畫 */
+        /* 原版的圖片大小、黑色陰影、以及浮動動畫 */
         .game-title img {
             width: 600px;
             max-width: 90vw;
             height: auto;
             display: block;
 
-            /* 防止瀏覽器在動畫時產生邊緣邊框黑線的優化設定 */
             will-change: transform, filter;
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
@@ -67,20 +66,12 @@
         }
 
         @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-15px);
-            }
-
-            100% {
-                transform: translateY(0px);
-            }
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
         }
 
-        /* 完美保留：原版的點擊提示文字樣式與灰色閃爍動畫 */
+        /* 原版的點擊提示文字樣式與灰色閃爍動畫 */
         .click-hint {
             margin-top: 30px;
             font-size: 1rem;
@@ -91,33 +82,19 @@
         }
 
         @keyframes blink {
-            0%, 100% {
-                opacity: 0.3;
-            }
-
-            50% {
-                opacity: 1;
-            }
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
 
-        /* 完美保留：原版的水波紋特效 */
+        /* 原版的水波紋特效 */
         .ripple {
             position: fixed;
             border-radius: 50%;
             pointer-events: none;
-
             border: 2px solid rgba(255,255,255,0.6);
-
-            background: radial-gradient(
-                circle,
-                rgba(255,255,255,0.4) 0%,
-                rgba(255,255,255,0) 70%
-            );
-
+            background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
             transform: scale(0);
-
             animation: ripple-effect 0.8s ease-out;
-
             z-index: 9999;
         }
 
@@ -128,27 +105,22 @@
             }
         }
 
-        /* 完美保留：原版的白光閃爍轉場層 */
+        /* 原版的白光閃爍轉場層 */
         .flash-overlay {
             position: fixed;
             inset: 0;
-
             background: white;
-
             opacity: 0;
-
             pointer-events: none;
-
             transition: opacity 0.5s ease;
-
             z-index: 999;
         }
 
-        /* ==================== 九宮格系統介面（與原版風格統一的雅緻淺色系） ==================== */
+        /* ==================== 九宮格系統介面（新增按鈕彈跳起動畫） ==================== */
         .grid-screen {
             position: absolute;
             inset: 0;
-            display: none; /* 初始隱藏 */
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -157,7 +129,7 @@
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 20;
             padding: 20px;
-            background-color: #fafafa; /* 溫潤的極淺灰背景，契合原版風格 */
+            background-color: #fafafa;
         }
 
         .grid-screen.active {
@@ -176,18 +148,18 @@
             text-align: center;
         }
 
-        /* 九宮格容器：設定間距為 80px */
+        /* 九宮格容器 */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 80px; /* 電腦大螢幕保留 80px 完美間距 */
+            gap: 80px;
             max-width: 900px;
             width: 100%;
             justify-content: center;
             align-items: center;
         }
 
-        /* 九宮格按鈕樣式：典雅白底與灰色、金銅色調和 */
+        /* 九宮格按鈕樣式（初始隱藏，準備播放登場動畫） */
         .grid-btn {
             background: #ffffff;
             border: 2px solid #e0e0e0;
@@ -204,12 +176,35 @@
             position: relative;
             overflow: hidden;
             outline: none;
+
+            /* 動畫初始狀態控制 */
+            opacity: 0;
         }
 
-        /* 按鈕懸停效果：優雅的原神岩元素金黃微發光 */
+        /* 當啟動 active 時，按鈕執行帶有回彈(cubic-bezier)的彈跳動畫 */
+        .grid-screen.active .grid-btn {
+            animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* 彈跳登場動畫線路：從小到大、微放大回彈、正常 */
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            70% {
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 按鈕懸停效果 */
         .grid-btn:hover {
-            transform: translateY(-5px);
-            border-color: #d3bc8e; /* 原神優雅淺金 */
+            transform: translateY(-5px) !important; /* 確保不被登場動畫殘留影響 */
+            border-color: #d3bc8e;
             color: #c4a162;
             box-shadow: 
                 0 15px 30px rgba(211, 188, 142, 0.15),
@@ -219,8 +214,7 @@
 
         /* 按鈕點擊效果 */
         .grid-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transform: translateY(1px) !important;
         }
 
         /* 裝飾線條效果 */
@@ -260,10 +254,10 @@
             border-color: #333333;
         }
 
-        /* 響應式設計：小螢幕時自動調整按鈕與間距，避免超出螢幕 */
+        /* 響應式設計 */
         @media (max-width: 768px) {
             .grid-container {
-                gap: 30px; /* 平板間距縮小至 30px */
+                gap: 30px;
                 max-width: 600px;
             }
             .grid-btn {
@@ -278,8 +272,8 @@
 
         @media (max-width: 480px) {
             .grid-container {
-                gap: 15px; /* 手機直向間距縮小至 15px */
-                grid-template-columns: repeat(3, 1fr); /* 依然保持九宮格 */
+                gap: 15px;
+                grid-template-columns: repeat(3, 1fr);
             }
             .grid-btn {
                 padding: 15px 5px;
@@ -298,28 +292,21 @@
 </head>
 <body>
 
-    <!-- 點擊進入的白光閃爍層 -->
     <div class="flash-overlay" id="flashOverlay"></div>
 
-    <!-- 階段一：遊戲開始畫面（完整保留原版風格） -->
     <div class="menu-container" id="menuContainer">
-
         <h1 class="game-title">
             <img src="Genshin1.png" alt="原神查詢系統">
         </h1>
-
         <div class="click-hint">
             ✦ 點擊任意地方進入 ✦
         </div>
-
     </div>
 
-    <!-- 階段二：九宮格功能選單（風格一致的典雅排版） -->
     <div class="grid-screen" id="gridScreen">
         <h2 class="grid-title">原神查詢選單</h2>
         
         <div class="grid-container">
-            <!-- 9 個功能按鈕 -->
             <button class="grid-btn">角色資料查詢</button>
             <button class="grid-btn">聖遺物評分</button>
             <button class="grid-btn">武器圖鑑</button>
@@ -333,7 +320,6 @@
             <button class="grid-btn">系統設定</button>
         </div>
 
-        <!-- 返回起始畫面 -->
         <button class="back-btn" id="backBtn">返回主頁</button>
     </div>
 
@@ -343,7 +329,6 @@
         const backBtn = document.getElementById('backBtn');
         const flash = document.getElementById('flashOverlay');
 
-        // 是否已經進入了選單，防止重複點擊
         let isEntered = false;
 
         // 監聽開始畫面點擊事件
@@ -351,22 +336,18 @@
             if (isEntered) return;
             isEntered = true;
 
-            // 建立水波紋特效
             createRipple(e);
 
-            // 觸發白光閃爍
             flash.style.opacity = '0.4';
 
-            // 開始畫面淡出，向上微縮放
             container.style.opacity = '0';
             container.style.transform = 'scale(1.1)';
-            container.style.pointerEvents = 'none'; // 點擊後禁用
+            container.style.pointerEvents = 'none';
 
             setTimeout(() => {
                 flash.style.opacity = '0';
             }, 300);
 
-            // 調整：稍微放慢 1.2 秒（1200毫秒）後，才優雅地滑入載入彈窗
             setTimeout(() => {
                 showEntranceMessage();
             }, 1200);
@@ -377,14 +358,10 @@
             const ripple = document.createElement('div');
             ripple.classList.add('ripple');
 
-            const size = Math.max(
-                window.innerWidth,
-                window.innerHeight
-            ) * 0.5;
+            const size = Math.max(window.innerWidth, window.innerHeight) * 0.5;
 
             ripple.style.width = size + 'px';
             ripple.style.height = size + 'px';
-
             ripple.style.left = (event.clientX - size / 2) + 'px';
             ripple.style.top = (event.clientY - size / 2) + 'px';
 
@@ -395,7 +372,7 @@
             });
         }
 
-        // 提示彈窗（與原版風格相容的清爽雅緻設計）
+        // 提示彈窗（新增 loading.mp4 影片）
         function showEntranceMessage() {
             const msgBox = document.createElement('div');
 
@@ -416,10 +393,14 @@
             msgBox.style.opacity = '0';
             msgBox.style.transition = 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
 
+            // 在文字與副標題中間，插入 loading.mp4 影片
             msgBox.innerHTML = `
-                <p style="margin-bottom:15px; letter-spacing: 2px;">
+                <p style="margin-bottom: 20px; letter-spacing: 2px;">
                     ✨ 正在連結提瓦特大陸... ✨
                 </p>
+                <div style="width: 100%; display: flex; justify-content: center; margin-bottom: 20px;">
+                    <video src="loading.mp4" autoplay loop muted playsinline style="width: 180px; max-width: 100%; height: auto; border-radius: 8px;"></video>
+                </div>
                 <span style="font-size:1.05rem; color:#888888; font-weight: normal; letter-spacing: 1px;">
                     請稍候，即將進入查詢系統
                 </span>
@@ -427,7 +408,6 @@
 
             document.body.appendChild(msgBox);
 
-            // 讓過渡彈窗平滑顯現
             requestAnimationFrame(() => {
                 msgBox.style.opacity = '1';
                 msgBox.style.transform = 'translate(-50%, -50%) scale(1)';
@@ -441,11 +421,12 @@
                 setTimeout(() => {
                     msgBox.remove();
                     
-                    // 徹底隱藏開始畫面容器，避免干擾九宮格操作
                     container.style.display = 'none';
-
-                    // 顯現九宮格選單
                     gridScreen.style.display = 'flex';
+                    
+                    // 動態計算九宮格按鈕的延遲時間（製造從左上到右下的漸進登場感）
+                    assignGridAnimationDelays();
+
                     requestAnimationFrame(() => {
                         gridScreen.classList.add('active');
                     });
@@ -454,17 +435,32 @@
             }, 3000);
         }
 
-        // 返回按鈕點擊事件：恢復初始畫面
-        backBtn.addEventListener('click', function(e) {
-            e.stopPropagation(); // 阻止事件冒泡到 body
+        // 動態計算九宮格按鈕的登場延遲時間（從左上角往右下角）
+        function assignGridAnimationDelays() {
+            const buttons = document.querySelectorAll('.grid-screen .grid-btn');
+            // 九宮格行列索引對應 (0,0) (0,1) (0,2) / (1,0) (1,1) (1,2) ...
+            buttons.forEach((btn, index) => {
+                const row = Math.floor(index / 3);
+                const col = index % 3;
+                // 利用 row + col 決定先後順序，數值越小越早彈出
+                const delay = (row + col) * 0.12; 
+                btn.style.animationDelay = `${delay}s`;
+            });
+        }
 
-            // 隱藏九宮格
+        // 返回按鈕點擊事件
+        backBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+
             gridScreen.classList.remove('active');
+            
+            // 返回時重置按鈕樣式，確保下次進入能重新播放動畫
+            const buttons = document.querySelectorAll('.grid-btn');
+            buttons.forEach(btn => btn.style.animationDelay = '0s');
             
             setTimeout(() => {
                 gridScreen.style.display = 'none';
 
-                // 重新顯示開始畫面並還原狀態
                 container.style.display = 'flex';
                 requestAnimationFrame(() => {
                     container.style.opacity = '1';
@@ -475,15 +471,14 @@
             }, 800);
         });
 
-        // 綁定九宮格按鈕點擊效果（範例提示）
+        // 綁定九宮格按鈕點擊效果
         const buttons = document.querySelectorAll('.grid-btn');
         buttons.forEach((btn, index) => {
             btn.addEventListener('click', function(e) {
-                e.stopPropagation(); // 阻止冒泡
+                e.stopPropagation();
                 
                 console.log(`點擊了第 ${index + 1} 個按鈕：${this.innerText}`);
                 
-                // 點擊後的反饋光效
                 this.style.borderColor = '#c4a162';
                 setTimeout(() => {
                     this.style.borderColor = '#e0e0e0';
@@ -491,12 +486,11 @@
             });
         });
 
-        // 綁定「每日簽到助手」專屬跳轉連結
+        // 每日簽到助手
         const signinBtn = document.getElementById('signinBtn');
         if (signinBtn) {
             signinBtn.addEventListener('click', function() {
                 const targetUrl = "https://act.hoyolab.com/ys/event/signin-sea-v3/index.html?act_id=e202102251931481&hyl_auth_required=true&hyl_presentation_style=fullscreen&lang=zh-tw&utm_source=hoyolab&utm_medium=tools";
-                // 使用 window.open 在新分頁開啟，防止 Iframe 的同源政策擋下
                 window.open(targetUrl, '_blank');
             });
         }
